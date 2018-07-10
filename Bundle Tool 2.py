@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from mailmerge import MailMerge
+import itertools
 import openpyxl
 
 
@@ -427,8 +428,25 @@ class Ui_MainWindow(object):
 
         self.baffles_unit_cost_lineEdit.setCursorPosition(0)
 
-    def create_dicts(self, qty, cost):
-        pass
+    def create_dicts(self, qty, cost, totals):
+        docx_dict.extend([{'item': i, 'parts_number': p, 'qty': q, 'unit_cost': c, 'total_cost': str(t)} for i, p, q, c, t in
+         itertools.zip_longest(item, parts, qty, cost, totals, fillvalue='N/A')])
+        self.write_final_options(docx_dict)
+
+    def write_final_options(self, docx_dict):
+        template = "./test-print.docx"
+        document = MailMerge(template)
+        # print(document.get_merge_fields())
+        document.merge_rows('item', docx_dict)
+        document.write('./test-test-test.docx')
+        document.close()
+
+    # This also works. Leaving it in case the other function misbehaves.
+    # def create_dicts(self, qty, cost, totals):
+    #     a = 0
+    #     for i in item:
+    #         docx_dict.update({i: [qty[a], cost[a], totals[a]]})
+    #         a += 1
 
     def file_save(self):
         name = QtWidgets.QFileDialog.getSaveFileName()
@@ -541,12 +559,14 @@ class Ui_MainWindow(object):
         self.calculated_materials_label.setText(str(materials_cost))
         self.calculated_rep_cost_label.setText(str(rep_cost))
         self.calculated_list_price_label.setText(str(list_price))
+        self.create_dicts(item_qtys, unit_costs, total_costs)
         del total_costs[:]
         del unit_costs_float[:]
         del item_qtys_float[:]
 
     def calculate_total_costs(self):
         self.costs_qtys()
+        self.write_final_options()
 
 parts_numbers = ["", "", "", "", "", "", ""]
 materials_cost = 0.0
@@ -562,6 +582,8 @@ qty = item_qtys
 unit_cost = unit_costs
 item_total = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 keys = ['item', 'part_number', 'qty', 'unit_cost', 'item_total']
+parts = parts_numbers
+docx_dict = []
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
