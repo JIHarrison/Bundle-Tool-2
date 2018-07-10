@@ -432,6 +432,7 @@ class Ui_MainWindow(object):
         docx_dict.extend([{'item': i, 'parts_number': p, 'qty': q, 'unit_cost': c, 'total_cost': str(t)} for i, p, q, c, t in
          itertools.zip_longest(item, parts, qty, cost, totals, fillvalue='N/A')])
         self.write_final_options(docx_dict)
+        docx_dict.clear()
 
     def write_final_options(self, docx_dict):
         template = "./test-print.docx"
@@ -566,7 +567,6 @@ class Ui_MainWindow(object):
 
     def calculate_total_costs(self):
         self.costs_qtys()
-        self.write_final_options()
 
 parts_numbers = ["", "", "", "", "", "", ""]
 materials_cost = 0.0
