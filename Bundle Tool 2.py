@@ -429,28 +429,25 @@ class Ui_MainWindow(object):
         self.baffles_unit_cost_lineEdit.setCursorPosition(0)
 
     def create_dicts(self, qty, cost, totals):
+        docx_dict.clear()
         docx_dict.extend([{'item': i, 'parts_number': p, 'qty': q, 'unit_cost': c, 'total_cost': str(t)} for i, p, q, c, t in
          itertools.zip_longest(item, parts, qty, cost, totals, fillvalue='N/A')])
-        self.write_final_options(docx_dict)
-        docx_dict.clear()
 
-    def write_final_options(self, docx_dict):
+    def create_merge2(self, rep, list_price, markup, material_cost, redraw_eng_cost):
+        merge2.clear()
+        merge2.update({'rep_cost': str(rep), 'list_price': str(list_price), 'markup': str(markup), 'materials_cost': str(material_cost), 'complete_cost':str(redraw_eng_cost)})
+
+    def write_final_options(self, name):
         template = "./test-print.docx"
         document = MailMerge(template)
-        # print(document.get_merge_fields())
         document.merge_rows('item', docx_dict)
-        document.write('./test-test-test.docx')
+        document.merge(**merge2)
+        document.write(name + '.docx')
         document.close()
-
-    # This also works. Leaving it in case the other function misbehaves.
-    # def create_dicts(self, qty, cost, totals):
-    #     a = 0
-    #     for i in item:
-    #         docx_dict.update({i: [qty[a], cost[a], totals[a]]})
-    #         a += 1
 
     def file_save(self):
         name = QtWidgets.QFileDialog.getSaveFileName()
+        self.write_final_options(str(name[0]))
 
     def set_tubesheet_qty(self):
         item_qtys[0] = self.spinBox.text()
@@ -551,6 +548,7 @@ class Ui_MainWindow(object):
         total_costs = [x * y for x, y in zip(unit_costs_float, item_qtys_float)]
         item_total = total_costs
         materials_cost = sum(total_costs[:-2])
+        material_cost = materials_cost
         redraw_eng_cost = sum(total_costs)
         markup_multiplier = self.markup_SpinBox.text()
         markup_multiplier2 = self.markup_SpinBox_2.text()
@@ -561,6 +559,7 @@ class Ui_MainWindow(object):
         self.calculated_rep_cost_label.setText(str(rep_cost))
         self.calculated_list_price_label.setText(str(list_price))
         self.create_dicts(item_qtys, unit_costs, total_costs)
+        self.create_merge2(rep_cost, list_price, markup_multiplier, material_cost, redraw_eng_cost)
         del total_costs[:]
         del unit_costs_float[:]
         del item_qtys_float[:]
@@ -584,6 +583,7 @@ item_total = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 keys = ['item', 'part_number', 'qty', 'unit_cost', 'item_total']
 parts = parts_numbers
 docx_dict = []
+merge2 = {}
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
