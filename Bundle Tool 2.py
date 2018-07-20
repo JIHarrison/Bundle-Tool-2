@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from mailmerge import MailMerge
 import itertools
-import openpyxl
+import datetime
 
 
 class Ui_MainWindow(object):
@@ -433,16 +433,20 @@ class Ui_MainWindow(object):
         docx_dict.extend([{'item': i, 'parts_number': p, 'qty': q, 'unit_cost': c, 'total_cost': str(t)} for i, p, q, c, t in
          itertools.zip_longest(item, parts, qty, cost, totals, fillvalue='N/A')])
 
-    def create_merge2(self, rep, list_price, markup, material_cost, redraw_eng_cost):
+    def create_merge2(self, rep, list_price, markup, material_cost, redraw_eng_cost, markup_multiplier2):
         merge2.clear()
-        merge2.update({'rep_cost': str(rep), 'list_price': str(list_price), 'markup': str(markup), 'materials_cost': str(material_cost), 'complete_cost':str(redraw_eng_cost)})
+        date_time = datetime.date.today()
+        merge2.update({'rep_cost': str(rep), 'list_price': str(list_price), 'markup': str(markup), 'materials_cost': str(material_cost), 'complete_cost':str(redraw_eng_cost), 'markup2':str(markup_multiplier2), 'date_time':str(date_time)})
 
     def write_final_options(self, name):
-        template = "./test-print.docx"
+        template = "test-print.docx"
         document = MailMerge(template)
         document.merge_rows('item', docx_dict)
         document.merge(**merge2)
-        document.write(name + '.docx')
+        if name.endswith('.docx'):
+            document.write(name)
+        else:
+            document.write(name + '.docx')
         document.close()
 
     def file_save(self):
@@ -559,7 +563,7 @@ class Ui_MainWindow(object):
         self.calculated_rep_cost_label.setText(str(rep_cost))
         self.calculated_list_price_label.setText(str(list_price))
         self.create_dicts(item_qtys, unit_costs, total_costs)
-        self.create_merge2(rep_cost, list_price, markup_multiplier, material_cost, redraw_eng_cost)
+        self.create_merge2(rep_cost, list_price, markup_multiplier, material_cost, redraw_eng_cost, markup_multiplier2)
         del total_costs[:]
         del unit_costs_float[:]
         del item_qtys_float[:]
