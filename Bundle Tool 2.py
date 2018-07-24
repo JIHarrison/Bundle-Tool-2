@@ -3,7 +3,8 @@ import sys
 from mailmerge import MailMerge
 import itertools
 import datetime
-
+import openpyxl
+import pandas as pd
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -281,6 +282,10 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionSave)
         self.menubar.addAction(self.menuFile.menuAction())
 
+        self.actionExport_to_Excel = QtWidgets.QAction(MainWindow)
+        self.actionExport_to_Excel.setObjectName("actionExport_to_Excel")
+        self.menuFile.addAction(self.actionExport_to_Excel)
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.part_number_lineEdit, self.spinBox)
@@ -352,7 +357,7 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
-
+        self.actionExport_to_Excel.setText(_translate("MainWindow", "Export to Excel"))
 
 
 
@@ -398,6 +403,7 @@ class Ui_MainWindow(object):
 
 
         self.actionSave.triggered.connect(self.file_save)
+        self.actionExport_to_Excel.triggered.connect(self.excel_export)
 
         # lineEdit validators restricting input to integers and 2 decimal places
         self.baffles_unit_cost_lineEdit.setInputMask('')
@@ -452,6 +458,9 @@ class Ui_MainWindow(object):
     def file_save(self):
         name = QtWidgets.QFileDialog.getSaveFileName()
         self.write_final_options(str(name[0]))
+
+    def excel_export(self):
+        pass
 
     def set_tubesheet_qty(self):
         item_qtys[0] = self.spinBox.text()
@@ -570,6 +579,9 @@ class Ui_MainWindow(object):
 
     def calculate_total_costs(self):
         self.costs_qtys()
+
+    def create_dataframe(self):
+        pass
 
 parts_numbers = ["", "", "", "", "", "", ""]
 materials_cost = 0.0

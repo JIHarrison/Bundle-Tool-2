@@ -196,7 +196,7 @@ class Ui_MainWindow(object):
         self.gaskets_unit_cost_lineEdit_1.setObjectName("gaskets_unit_cost_lineEdit_1")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(340, 670, 91, 23))
-        self.pushButton.setObjectName("calculate_pushButton")
+        self.pushButton.setObjectName("pushButton")
         self.total_cost_label = QtWidgets.QLabel(self.centralwidget)
         self.total_cost_label.setGeometry(QtCore.QRect(310, 480, 71, 16))
         font = QtGui.QFont()
@@ -281,7 +281,10 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.actionSave = QtWidgets.QAction(MainWindow)
         self.actionSave.setObjectName("actionSave")
+        self.actionExport_to_Excel = QtWidgets.QAction(MainWindow)
+        self.actionExport_to_Excel.setObjectName("actionExport_to_Excel")
         self.menuFile.addAction(self.actionSave)
+        self.menuFile.addAction(self.actionExport_to_Excel)
         self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -355,4 +358,5 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
+        self.actionExport_to_Excel.setText(_translate("MainWindow", "Export to Excel"))
 
